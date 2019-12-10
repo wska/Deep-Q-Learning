@@ -70,13 +70,13 @@ class DQNAgent:
 
     #Get action from model using epsilon-greedy policy
     def get_action(self, state):
-###############################################################################
-###############################################################################
-        #Insert your e-greedy policy code here
-        #Tip 1: Use the random package to generate a random action.
-        #Tip 2: Use keras.model.predict() to compute Q-values from the state.
-        action = random.randrange(self.action_size)
+        if np.random.rand() < self.epsilon:
+            action = random.randrange(self.action_size)
+        else:
+            q_values = self.model.predict(state)
+            action = np.argmax(q_values[0])        
         return action
+
 ###############################################################################
 ###############################################################################
     #Save sample <s,a,r,s'> to the replay memory
@@ -193,7 +193,7 @@ if __name__ == "__main__":
             state = next_state #Propagate state
 
             if done:
-                #At the end of very episode, update the target network
+                #At the end of every episode, update the target network
                 if e % agent.target_update_frequency == 0:
                     agent.update_target_model()
                 #Plot the play time for every episode
