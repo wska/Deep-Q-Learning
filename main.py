@@ -7,6 +7,7 @@ from collections import deque
 from keras.layers import Dense
 from keras.optimizers import Adam
 from keras.models import Sequential
+from keras.utils import plot_model
 
 EPISODES = 1000 #Maximum number of episodes
 
@@ -42,6 +43,8 @@ class DQNAgent:
         #Create main network and target network (using build_model defined below)
         self.model = self.build_model()
         self.target_model = self.build_model()
+
+        #plot_model(self.model, to_file='model.png', show_shapes=True)
 
         #Initialize target network
         self.update_target_model()
@@ -140,6 +143,8 @@ if __name__ == "__main__":
     #For CartPole-v0, maximum episode length is 200
     env = gym.make('CartPole-v0') #Generate Cartpole-v0 environment object from the gym library
     #Get state and action sizes from the environment
+    print("OBSERVATION SPACE: ", end="")
+    print(env.observation_space)
     state_size = env.observation_space.shape[0]
     action_size = env.action_space.n
 
