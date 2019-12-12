@@ -77,7 +77,7 @@ class DQNAgent:
             action = random.randrange(self.action_size)
         else:
             q_values = self.model.predict(state)
-            action = np.argmax(q_values[0])        
+            action = np.argmax(q_values[0])
         return action
 
 ###############################################################################
@@ -104,22 +104,28 @@ class DQNAgent:
             update_target[i] = mini_batch[i][3] #Allocate s'(i) for the target network array from iteration i in the batch
             done.append(mini_batch[i][4])  #Store done(i)
 
-        target = self.model.predict(update_input) #Generate target values for training the inner loop network using the network model
-        target_val = self.target_model.predict(update_target) #Generate the target values for training the outer loop target network
+        state_values = self.model.predict(update_input) #Generate target values for training the inner loop network using the network model
+        target_values = self.target_model.predict(update_target) #Generate the target values for training the outer loop target network
 
         #Q Learning: get maximum Q value at s' from target network
-###############################################################################
-###############################################################################
+
         #Insert your Q-learning code here
-        #Tip 1: Observe that the Q-values are stored in the variable target
+        #Tip 1: Observe that the Q-values are stored in the variable target (renamed to state_values)
         #Tip 2: What is the Q-value of the action taken at the last state of the episode?
+        state_values[i][action[i]] = reward[i]
+
+        if not done:
+            for i in range(self.batch_size):
+                state_values[i][action[i]] = reward[i] + self.discount_factor * np.amax(target_values[0])
+
+
+        """
         for i in range(self.batch_size): #For every batch
             target[i][action[i]] = random.randint(0,1)
-###############################################################################
-###############################################################################
+            """
 
         #Train the inner loop network
-        self.model.fit(update_input, target, batch_size=self.batch_size,
+        self.model.fit(update_input, state_values, batch_size=self.batch_size,
                        epochs=1, verbose=0)
         return
     #Plots the score per episode as well as the maximum q value per episode, averaged over precollected states.
@@ -190,7 +196,7 @@ if __name__ == "__main__":
             next_state, reward, done, info = env.step(action)
             next_state = np.reshape(next_state, [1, state_size]) #Reshape next_state similarly to state
 
-            #Save sample <s, a, r, s'> to the replay memory
+            #Save sample <s, batch dimension to 'testnote' as fa, r, s'> to the replay memory
             agent.append_sample(state, action, reward, next_state, done)
             #Training step
             agent.train_model()
