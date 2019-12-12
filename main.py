@@ -8,6 +8,7 @@ from keras.layers import Dense
 from keras.optimizers import Adam
 from keras.models import Sequential
 from keras.utils import plot_model
+from models import *
 
 EPISODES = 1000 #Maximum number of episodes
 
@@ -41,31 +42,15 @@ class DQNAgent:
         self.memory = deque(maxlen=self.memory_size)
 
         #Create main network and target network (using build_model defined below)
-        self.model = self.build_model()
-        self.target_model = self.build_model()
+        self.model = build_model(self)
+        self.target_model = build_model(self)
 
         #plot_model(self.model, to_file='model.png', show_shapes=True)
 
         #Initialize target network
         self.update_target_model()
 
-    #Approximate Q function using Neural Network
-    #State is the input and the Q Values are the output.
-###############################################################################
-###############################################################################
-        #Edit the Neural Network model here
-        #Tip: Consult https://keras.io/getting-started/sequential-model-guide/
-    def build_model(self):
-        model = Sequential()
-        model.add(Dense(16, input_dim=self.state_size, activation='relu',
-                        kernel_initializer='he_uniform'))
-        model.add(Dense(self.action_size, activation='linear',
-                        kernel_initializer='he_uniform'))
-        model.summary()
-        model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
-        return model
-###############################################################################
-###############################################################################
+
 
     #After some time interval update the target model to be same with model
     def update_target_model(self):
@@ -104,30 +89,32 @@ class DQNAgent:
             update_target[i] = mini_batch[i][3] #Allocate s'(i) for the target network array from iteration i in the batch
             done.append(mini_batch[i][4])  #Store done(i)
 
-        state_values = self.model.predict(update_input) #Generate target values for training the inner loop network using the network model
-        target_values = self.target_model.predict(update_target) #Generate the target values for training the outer loop target network
+
+
+
+        state_value = self.model.predict(update_input) #Generate target values for training the inner loop network using the network model
+        target_val = self.target_model.predict(update_target) #Generate the target values for training the outer loop target network
 
         #Q Learning: get maximum Q value at s' from target network
 
         #Insert your Q-learning code here
         #Tip 1: Observe that the Q-values are stored in the variable target (renamed to state_values)
         #Tip 2: What is the Q-value of the action taken at the last state of the episode?
-        state_values[i][action[i]] = reward[i]
+        
 
-        if not done:
-            for i in range(self.batch_size):
-                state_values[i][action[i]] = reward[i] + self.discount_factor * np.amax(target_values[0])
+        for i in range(self.batch_size):
+           
+            if done[i]:
+                state_value[i, action[i]] = reward[i]
+            else:
+                state_value[i, action[i]] = reward[i] + self.discount_factor*np.amax(target_val[i])
+        
+        
+        self.model.fit(update_input, state_value, batch_size=self.batch_size, epochs=1, verbose=0)
 
-
-        """
-        for i in range(self.batch_size): #For every batch
-            target[i][action[i]] = random.randint(0,1)
-            """
-
-        #Train the inner loop network
-        self.model.fit(update_input, state_values, batch_size=self.batch_size,
-                       epochs=1, verbose=0)
         return
+
+
     #Plots the score per episode as well as the maximum q value per episode, averaged over precollected states.
     def plot_data(self, episodes, scores, max_q_mean):
         pylab.figure(0)
