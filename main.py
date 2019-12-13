@@ -210,7 +210,7 @@ def evaluateAgent(*args, **kwargs):
 
 
 #Plots the score per episode as well as the maximum q value per episode, averaged over precollected states.
-def plot_data(episodes, scores, max_q_mean, legends):
+def plot_data(episodes, scores, max_q_mean, legends, name=""):
 
     assert len(episodes) == len(max_q_mean)
     pylab.figure(0)
@@ -220,7 +220,7 @@ def plot_data(episodes, scores, max_q_mean, legends):
     pylab.ylabel("Average Q Value")
     pylab.legend(legends)
     pylab.title("Average Q-value over Episodes")
-    pylab.savefig("plots/qvalues"+str(i)+".png")
+    pylab.savefig("plots/qvalues"+name+".png")
 
     
     assert len(episodes) == len(scores)
@@ -228,6 +228,19 @@ def plot_data(episodes, scores, max_q_mean, legends):
     # Converts the scores into the averages of the last 100 episodes
     allEpisodePeriods = []
     allScoreMeans = []
+
+
+    assert len(episodes) == len(scores)
+    pylab.figure(1)
+    for i in range(len(episodes)):
+        pylab.plot(episodes[i], scores[i])
+    pylab.xlabel("Episodes")
+    pylab.ylabel("Score")
+    pylab.legend(legends)
+    pylab.title("Scores over Episodes")
+    pylab.savefig("plots/scores"+name+".png")
+
+
 
     for scoreIndex in range(0, len(scores)):
         
@@ -243,7 +256,7 @@ def plot_data(episodes, scores, max_q_mean, legends):
         allEpisodePeriods.append(episodePeriods)
         
 
-    pylab.figure(1)
+    pylab.figure(2)
     for i in range(len(allScoreMeans)):
         pylab.plot(allEpisodePeriods[i], allScoreMeans[i])
 
@@ -251,7 +264,7 @@ def plot_data(episodes, scores, max_q_mean, legends):
     pylab.ylabel("Mean score from [current-100:current] episodes")
     pylab.legend(legends)
     pylab.title("Mean score from previous 100 episodes")
-    pylab.savefig("plots/scores"+str(i)+".png")
+    pylab.savefig("plots/meanScores"+name+".png")
 
 
 
@@ -262,7 +275,7 @@ def main():
     legends = []    
 
     agents = [Agent1, Agent2, Agent3]
-
+    name = "layerComparison"
 
 
     for agent in agents:
@@ -277,7 +290,7 @@ def main():
         legends.append(agent["name"])
 
 
-    plot_data(agentEpisodes,agentScores,agentMax_q_means, legends)
+    plot_data(agentEpisodes,agentScores,agentMax_q_means, legends, name)
 
 
 
