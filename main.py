@@ -34,6 +34,7 @@ class DQNAgent:
         self.learning_rate = learning_rate
         self.target_update_frequency = target_update_frequency
         self.memory_size = memory_size
+
         self.regularization = regularization
         self.epsilonDecay = epsilonDecay
 
@@ -221,14 +222,35 @@ def plot_data(episodes, scores, max_q_mean, legends):
     pylab.title("Average Q-value over Episodes")
     pylab.savefig("plots/qvalues"+str(i)+".png")
 
+    
     assert len(episodes) == len(scores)
+
+    # Converts the scores into the averages of the last 100 episodes
+    allEpisodePeriods = []
+    allScoreMeans = []
+
+    for scoreIndex in range(0, len(scores)):
+        
+        scoreMeans = []
+        episodePeriods = []
+
+        for i in range(1, len(scores[scoreIndex]), 100):
+            mean = np.mean(scores[scoreIndex][i:i+100])
+            scoreMeans.append(mean)
+            episodePeriods.append(i+100)
+        
+        allScoreMeans.append(scoreMeans)
+        allEpisodePeriods.append(episodePeriods)
+        
+
     pylab.figure(1)
-    for i in range(len(episodes)):
-        pylab.plot(episodes[i], scores[i])
-    pylab.xlabel("Episodes")
-    pylab.ylabel("Score")
+    for i in range(len(allScoreMeans)):
+        pylab.plot(allEpisodePeriods[i], allScoreMeans[i])
+
+    pylab.xlabel("Episode")
+    pylab.ylabel("Mean score from [current-100:current] episodes")
     pylab.legend(legends)
-    pylab.title("Scores over Episodes")
+    pylab.title("Mean score from previous 100 episodes")
     pylab.savefig("plots/scores"+str(i)+".png")
 
 
