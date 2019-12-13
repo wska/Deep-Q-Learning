@@ -11,7 +11,7 @@ from keras.utils import plot_model
 from models import *
 from agents import *
 
-EPISODES = 300 #Maximum number of episodes
+EPISODES = 1000 #Maximum number of episodes
 
 #DQN Agent for the Cartpole
 #Q function approximation with NN, experience replay, and target network
@@ -126,10 +126,7 @@ class DQNAgent:
 ############################################################################################################
 
 
-def evaluateAgent(discount_factor=0.95, learning_rate=0.005,\
-                  target_update_frequency=1, memory_size=1000,\
-                  regularization = 0.000, epsilonDecay=1.00, \
-                  model=default_model):
+def evaluateAgent(*args, **kwargs):
 
     #For CartPole-v0, maximum episode length is 200
     env = gym.make('CartPole-v0') #Generate Cartpole-v0 environment object from the gym library
@@ -140,7 +137,7 @@ def evaluateAgent(discount_factor=0.95, learning_rate=0.005,\
     action_size = env.action_space.n
 
     #Create agent, see the DQNAgent __init__ method for details
-    agent = DQNAgent(state_size, action_size)
+    agent = DQNAgent(state_size=state_size, action_size=action_size, *args, **kwargs)
 
     #Collect test states for plotting Q values using uniform random policy
     test_states = np.zeros((agent.test_state_no, state_size))
@@ -239,7 +236,7 @@ def plot_data(episodes, scores, max_q_mean, legends):
 def main():
     agentEpisodes = []
     agentScores = []
-    agentMax_q_means = []
+    agentMax_q_means = []   
     legends = []    
 
     agents = [Agent1, Agent2, Agent3]
