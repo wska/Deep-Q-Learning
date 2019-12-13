@@ -28,13 +28,28 @@ class DQNAgent:
 
         #Set hyper parameters for the DQN. Do not adjust those labeled as Fixed.
         self.discount_factor = 0.95
+        self.learning_rate = 0.001
+        self.target_update_frequency = 3
+        self.memory_size = 1500
+        self.regularization = 0.000
+        self.epsilonDecay = 0.99
+
+
+        '''
+        #Default parameters
+        self.discount_factor = 0.95
         self.learning_rate = 0.005
+        self.target_update_frequency = 1
+        self.memory_size = 1000
+        self.regularization = 0.000
+        self.epsilonDecay = 1.00
+        '''
+
+        # Fixed parameters(DO NOT TOUCH)
+        self.train_start = 1000 #Fixed
         self.epsilon = 0.02 #Fixed
         self.batch_size = 32 #Fixed
-        self.memory_size = 1000
-        self.train_start = 1000 #Fixed
-        self.target_update_frequency = 1
-
+        
         #Number of test states for Q value plots
         self.test_state_no = 10000
 
@@ -42,8 +57,8 @@ class DQNAgent:
         self.memory = deque(maxlen=self.memory_size)
 
         #Create main network and target network (using build_model defined below)
-        self.model = build_model(self)
-        self.target_model = build_model(self)
+        self.model = SGDtwoLayerModel(self)
+        self.target_model = SGDtwoLayerModel(self)
 
         #plot_model(self.model, to_file='model.png', show_shapes=True)
 
@@ -111,6 +126,7 @@ class DQNAgent:
         
         
         self.model.fit(update_input, state_value, batch_size=self.batch_size, epochs=1, verbose=0)
+        self.epsilon = self.epsilon*self.epsilonDecay
 
         return
 
