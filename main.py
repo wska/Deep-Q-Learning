@@ -9,14 +9,17 @@ from keras.optimizers import Adam
 from keras.models import Sequential
 from keras.utils import plot_model
 from models import *
+from agents import *
 
-EPISODES = 1000 #Maximum number of episodes
+EPISODES = 300 #Maximum number of episodes
 
 #DQN Agent for the Cartpole
 #Q function approximation with NN, experience replay, and target network
 class DQNAgent:
     #Constructor for the agent (invoked when DQN is first called in main)
-    def __init__(self, state_size, action_size):
+    def __init__(self, state_size, action_size, discount_factor=0.95, learning_rate=0.005,\
+        target_update_frequency=1, memory_size=1000, regularization = 0.000, epsilonDecay=1.00, model=default_model):
+
         self.check_solve = False	#If True, stop if you satisfy solution confition
         self.render = False        #If you want to see Cartpole learning, then change to True
 
@@ -27,23 +30,13 @@ class DQNAgent:
        # Modify here
 
         #Set hyper parameters for the DQN. Do not adjust those labeled as Fixed.
-        self.discount_factor = 0.95
-        self.learning_rate = 0.001
-        self.target_update_frequency = 3
-        self.memory_size = 1500
-        self.regularization = 0.000
-        self.epsilonDecay = 0.99
+        self.discount_factor = discount_factor
+        self.learning_rate = learning_rate
+        self.target_update_frequency = target_update_frequency
+        self.memory_size = memory_size
+        self.regularization = regularization
+        self.epsilonDecay = epsilonDecay
 
-
-        '''
-        #Default parameters
-        self.discount_factor = 0.95
-        self.learning_rate = 0.005
-        self.target_update_frequency = 1
-        self.memory_size = 1000
-        self.regularization = 0.000
-        self.epsilonDecay = 1.00
-        '''
 
         # Fixed parameters(DO NOT TOUCH)
         self.train_start = 1000 #Fixed
@@ -57,8 +50,8 @@ class DQNAgent:
         self.memory = deque(maxlen=self.memory_size)
 
         #Create main network and target network (using build_model defined below)
-        self.model = SGDtwoLayerModel(self)
-        self.target_model = SGDtwoLayerModel(self)
+        self.model = model(self)
+        self.target_model = model(self)
 
         #plot_model(self.model, to_file='model.png', show_shapes=True)
 
@@ -80,8 +73,8 @@ class DQNAgent:
             action = np.argmax(q_values[0])
         return action
 
-###############################################################################
-###############################################################################
+
+
     #Save sample <s,a,r,s'> to the replay memory
     def append_sample(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done)) #Add sample to the end of the list
@@ -130,25 +123,14 @@ class DQNAgent:
 
         return
 
+############################################################################################################
 
-    #Plots the score per episode as well as the maximum q value per episode, averaged over precollected states.
-    def plot_data(self, episodes, scores, max_q_mean):
-        pylab.figure(0)
-        pylab.plot(episodes, max_q_mean, 'b')
-        pylab.xlabel("Episodes")
-        pylab.ylabel("Average Q Value")
-        pylab.savefig("qvalues.png")
 
-        pylab.figure(1)
-        pylab.plot(episodes, scores, 'b')
-        pylab.xlabel("Episodes")
-        pylab.ylabel("Score")
-        pylab.savefig("scores.png")
+def evaluateAgent(discount_factor=0.95, learning_rate=0.005,\
+                  target_update_frequency=1, memory_size=1000,\
+                  regularization = 0.000, epsilonDecay=1.00, \
+                  model=default_model):
 
-###############################################################################
-###############################################################################
-
-if __name__ == "__main__":
     #For CartPole-v0, maximum episode length is 200
     env = gym.make('CartPole-v0') #Generate Cartpole-v0 environment object from the gym library
     #Get state and action sizes from the environment
@@ -222,6 +204,64 @@ if __name__ == "__main__":
                 if agent.check_solve:
                     if np.mean(scores[-min(100, len(scores)):]) >= 195:
                         print("solved after", e-100, "episodes")
-                        agent.plot_data(episodes,scores,max_q_mean[:e+1])
-                        sys.exit()
-    agent.plot_data(episodes,scores,max_q_mean)
+                        #agent.plot_data(episodes,scores,max_q_mean[:e+1])
+                        max_q_mean = max_q_mean[:e+1]
+    
+
+    return episodes, scores, max_q_mean
+
+
+#Plots the score per episode as well as the maximum q value per episode, averaged over precollected states.
+def plot_data(episodes, scores, max_q_mean, legends):
+
+    assert len(episodes) == len(max_q_mean)
+    pylab.figure(0)
+    for i in range(len(episodes)):
+        pylab.plot(episodes[i], max_q_mean[i])
+    pylab.xlabel("Episodes")
+    pylab.ylabel("Average Q Value")
+    pylab.legend(legends)
+    pylab.title("Average Q-value over Episodes")
+    pylab.savefig("plots/qvalues"+str(i)+".png")
+
+    assert len(episodes) == len(scores)
+    pylab.figure(1)
+    for i in range(len(episodes)):
+        pylab.plot(episodes[i], scores[i])
+    pylab.xlabel("Episodes")
+    pylab.ylabel("Score")
+    pylab.legend(legends)
+    pylab.title("Scores over Episodes")
+    pylab.savefig("plots/scores"+str(i)+".png")
+
+
+
+def main():
+    agentEpisodes = []
+    agentScores = []
+    agentMax_q_means = []
+    legends = []    
+
+    agents = [Agent1, Agent2, Agent3]
+
+
+
+    for agent in agents:
+        episode,score,max_q_mean = evaluateAgent(discount_factor=agent["discount_factor"], learning_rate=agent["learning_rate"],\
+                  target_update_frequency=agent["target_update_frequency"], memory_size=agent["memory_size"],\
+                  regularization = agent["regularization"], epsilonDecay=agent["epsilonDecay"], \
+                  model=agent["model"])
+
+        agentEpisodes.append(episode)
+        agentScores.append(score)
+        agentMax_q_means.append(max_q_mean)
+        legends.append(agent["name"])
+
+
+    plot_data(agentEpisodes,agentScores,agentMax_q_means, legends)
+
+
+
+
+if __name__ == "__main__":
+    main()
