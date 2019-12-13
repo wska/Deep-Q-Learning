@@ -274,8 +274,8 @@ def main():
     agentMax_q_means = []   
     legends = []    
 
-    agents = [Agent1, Agent2, Agent3]
-    name = "layerComparison"
+    agents = [Agent5, Agent6, Agent7]
+    name = "nodeComparison"
 
 
     for agent in agents:

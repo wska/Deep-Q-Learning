@@ -18,6 +18,28 @@ def default_model(self):
         model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
         return model
 
+def default_model32(self):
+        model = Sequential()
+        model.add(Dense(32, input_dim=self.state_size, activation='relu',
+                        kernel_initializer='he_uniform'))
+        model.add(Dense(self.action_size, activation='linear',
+                        kernel_initializer='he_uniform'))
+        print("Creating default model")
+        model.summary()
+        model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
+        return model
+
+def default_model64(self):
+        model = Sequential()
+        model.add(Dense(64, input_dim=self.state_size, activation='relu',
+                        kernel_initializer='he_uniform'))
+        model.add(Dense(self.action_size, activation='linear',
+                        kernel_initializer='he_uniform'))
+        print("Creating default model")
+        model.summary()
+        model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
+        return model
+
 
 def model16to8toAction(self):
         model = Sequential()
@@ -50,7 +72,7 @@ def model16to8to4toAction(self):
 
         model.add(Dense(self.action_size, activation='linear',
                         kernel_initializer='he_uniform'))
-                        
+
         print("Creating 16-8-4-2 model")
         model.summary()
         model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
