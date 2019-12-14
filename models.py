@@ -18,6 +18,40 @@ def default_model(self):
         model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
         return model
 
+def updated_default(self):
+        model = Sequential()
+        model.add(Dense(32, input_dim=self.state_size, activation='relu',
+                        kernel_initializer='he_uniform'))
+
+        model.add(Dense(32, activation='relu',
+                        kernel_initializer='he_uniform'))
+
+        model.add(Dense(self.action_size, activation='linear',
+                        kernel_initializer='he_uniform'))
+        model.summary()
+        model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
+        return model
+
+
+
+def simple_model(self):
+        model = Sequential()
+        model.add(Dense(16, input_dim=self.state_size, activation='relu',
+                        kernel_initializer='he_uniform'))
+
+        model.add(Dense(16, activation='relu',
+                        kernel_initializer='he_uniform'))
+
+        model.add(Dense(16, activation='relu',
+                        kernel_initializer='he_uniform'))
+
+        model.add(Dense(self.action_size, activation='linear',
+                        kernel_initializer='he_uniform'))
+        model.summary()
+        model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
+        return model
+
+
 def default_model32(self):
         model = Sequential()
         model.add(Dense(32, input_dim=self.state_size, activation='relu',
@@ -41,12 +75,12 @@ def default_model64(self):
         return model
 
 
-def model16to8toAction(self):
+def model16to16toAction(self):
         model = Sequential()
         model.add(Dense(16, input_dim=self.state_size, activation='relu',
                         kernel_initializer='he_uniform', kernel_regularizer=l2(self.regularization)))
 
-        model.add(Dense(8, input_dim=self.state_size, activation='relu',
+        model.add(Dense(16, activation='relu',
                         kernel_initializer='he_uniform', kernel_regularizer=l2(self.regularization)))
 
         model.add(Dense(self.action_size, activation='linear',
@@ -58,16 +92,16 @@ def model16to8toAction(self):
         return model
 
 
-def model16to8to4toAction(self):
+def model16to16to16toAction(self):
         model = Sequential()
         model.add(Dense(16, input_dim=self.state_size, activation='relu',
                         kernel_initializer='he_uniform', kernel_regularizer=l2(self.regularization)))
 
-        model.add(Dense(8, input_dim=self.state_size, activation='relu',
+        model.add(Dense(16, activation='relu',
 
                         kernel_initializer='he_uniform', kernel_regularizer=l2(self.regularization)))
 
-        model.add(Dense(4, input_dim=self.state_size, activation='relu',
+        model.add(Dense(16, activation='relu',
                         kernel_initializer='he_uniform', kernel_regularizer=l2(self.regularization)))
 
         model.add(Dense(self.action_size, activation='linear',
@@ -84,7 +118,7 @@ def twoLayerModel(self):
         model.add(Dense(32, input_dim=self.state_size, activation='relu',
                         kernel_initializer='he_uniform', kernel_regularizer=l2(self.regularization)))
 
-        model.add(Dense(16, input_dim=self.state_size, activation='relu',
+        model.add(Dense(16, activation='relu',
                         kernel_initializer='he_uniform', kernel_regularizer=l2(self.regularization)))
 
         model.add(Dense(self.action_size, activation='linear',
@@ -100,11 +134,62 @@ def SGDtwoLayerModel(self):
         model.add(Dense(32, input_dim=self.state_size, activation='relu',
                         kernel_initializer='he_uniform', kernel_regularizer=l2(self.regularization)))
 
-        model.add(Dense(16, input_dim=self.state_size, activation='relu',
+        model.add(Dense(16, activation='relu',
                         kernel_initializer='he_uniform', kernel_regularizer=l2(self.regularization)))
                         
         model.add(Dense(self.action_size, activation='linear',
                         kernel_initializer='he_uniform'))
         model.summary()
         model.compile(loss='mse', optimizer=sgd)
+        return model
+
+
+def model32to16toAction(self):
+        model = Sequential()
+        model.add(Dense(32, input_dim=self.state_size, activation='relu',
+                        kernel_initializer='he_uniform', kernel_regularizer=l2(self.regularization)))
+
+        model.add(Dense(16, activation='relu',
+
+                        kernel_initializer='he_uniform', kernel_regularizer=l2(self.regularization)))
+
+        model.add(Dense(self.action_size, activation='linear',
+                        kernel_initializer='he_uniform'))
+
+        model.summary()
+        model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
+        return model
+
+
+def model64to32toAction(self):
+        model = Sequential()
+        model.add(Dense(64, input_dim=self.state_size, activation='relu',
+                        kernel_initializer='he_uniform', kernel_regularizer=l2(self.regularization)))
+
+        model.add(Dense(32, activation='relu',
+
+                        kernel_initializer='he_uniform', kernel_regularizer=l2(self.regularization)))
+
+        model.add(Dense(self.action_size, activation='linear',
+                        kernel_initializer='he_uniform'))
+
+        model.summary()
+        model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
+        return model
+
+
+def model32to32toAction(self):
+        model = Sequential()
+        model.add(Dense(32, input_dim=self.state_size, activation='relu',
+                        kernel_initializer='he_uniform', kernel_regularizer=l2(self.regularization)))
+
+        model.add(Dense(32, activation='relu',
+
+                        kernel_initializer='he_uniform', kernel_regularizer=l2(self.regularization)))
+
+        model.add(Dense(self.action_size, activation='linear',
+                        kernel_initializer='he_uniform'))
+
+        model.summary()
+        model.compile(loss='mse', optimizer=Adam(lr=self.learning_rate))
         return model

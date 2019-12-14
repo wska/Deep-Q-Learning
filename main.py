@@ -204,6 +204,7 @@ def evaluateAgent(*args, **kwargs):
                         print("solved after", e-100, "episodes")
                         #agent.plot_data(episodes,scores,max_q_mean[:e+1])
                         max_q_mean = max_q_mean[:e+1]
+                        return episodes, scores, max_q_mean
     
 
     return episodes, scores, max_q_mean
@@ -248,6 +249,11 @@ def plot_data(episodes, scores, max_q_mean, legends, name=""):
         episodePeriods = []
 
         for i in range(1, len(scores[scoreIndex]), 100):
+            if i > len(scores[scoreIndex]):
+                mean = np.mean(scores[scoreIndex][-101:len(scores[scoreIndex])])
+                scoreMeans.append(mean)
+                episodePeriods.append(len(scores[scoreIndex]))
+                break
             mean = np.mean(scores[scoreIndex][i:i+100])
             scoreMeans.append(mean)
             episodePeriods.append(i+100)
@@ -274,9 +280,9 @@ def main():
     agentMax_q_means = []   
     legends = []    
 
-    agents = [Agent5, Agent6, Agent7]
-    name = "nodeComparison"
-
+    agents = [Agent14, Agent15, Agent16]
+    name = "UpdatedDefaultMemoryComparison"
+    
 
     for agent in agents:
         episode,score,max_q_mean = evaluateAgent(discount_factor=agent["discount_factor"], learning_rate=agent["learning_rate"],\
