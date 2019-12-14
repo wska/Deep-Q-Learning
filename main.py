@@ -11,7 +11,7 @@ from keras.utils import plot_model
 from models import *
 from agents import *
 
-EPISODES = 1000 #Maximum number of episodes
+EPISODES = 200 #Maximum number of episodes
 
 #DQN Agent for the Cartpole
 #Q function approximation with NN, experience replay, and target network
@@ -159,7 +159,7 @@ def evaluateAgent(*args, **kwargs):
             test_states[i] = state
             state = next_state
 
-    scores, episodes = [], [] #Create dynamically growing score and episode counters
+    scores,meanScores, episodes = [], [], [] #Create dynamically growing score and episode counters
     for e in range(EPISODES):
         done = False
         score = 0
@@ -199,19 +199,21 @@ def evaluateAgent(*args, **kwargs):
 
                 # if the mean of scores of last 100 episodes is bigger than 195
                 # stop training
+                currentMean = np.mean(scores[-min(100, len(scores)):])
+                meanScores.append(currentMean)
                 if agent.check_solve:
-                    if np.mean(scores[-min(100, len(scores)):]) >= 195:
+                    if currentMean >= 195:
                         print("solved after", e-100, "episodes")
                         #agent.plot_data(episodes,scores,max_q_mean[:e+1])
                         max_q_mean = max_q_mean[:e+1]
                         return episodes, scores, max_q_mean
     
 
-    return episodes, scores, max_q_mean
+    return episodes, scores, max_q_mean, meanScores
 
 
 #Plots the score per episode as well as the maximum q value per episode, averaged over precollected states.
-def plot_data(episodes, scores, max_q_mean, legends, name=""):
+def plot_data(episodes, scores, max_q_mean, meanScores, legends, name=""):
 
     assert len(episodes) == len(max_q_mean)
     pylab.figure(0)
@@ -242,7 +244,7 @@ def plot_data(episodes, scores, max_q_mean, legends, name=""):
     pylab.savefig("plots/scores"+name+".png")
 
 
-
+    '''
     for scoreIndex in range(0, len(scores)):
         
         scoreMeans = []
@@ -260,7 +262,7 @@ def plot_data(episodes, scores, max_q_mean, legends, name=""):
         
         allScoreMeans.append(scoreMeans)
         allEpisodePeriods.append(episodePeriods)
-        
+    
 
     pylab.figure(2)
     for i in range(len(allScoreMeans)):
@@ -271,32 +273,46 @@ def plot_data(episodes, scores, max_q_mean, legends, name=""):
     pylab.legend(legends)
     pylab.title("Mean score from previous 100 episodes")
     pylab.savefig("plots/meanScores"+name+".png")
+    '''
+    #print(meanScores)
+    pylab.figure(2)
+    for i in range(len(meanScores)):
+        x = np.array([i for i in range(0, len(meanScores[i]))])
+        pylab.plot(x, meanScores[i])
 
+    pylab.xlabel("Episode")
+    pylab.ylabel("Mean score from the last 100 episodes(all available if >100)")
+    pylab.legend(legends)
+    pylab.title("Mean score from previous 100 episodes")
+    pylab.savefig("plots/meanScores"+name+".png")
+    
 
 
 def main():
     agentEpisodes = []
     agentScores = []
-    agentMax_q_means = []   
+    agentMax_q_means = [] 
+    agentMeanScores = []  
     legends = []    
 
     agents = [Agent14, Agent15, Agent16]
-    name = "UpdatedDefaultMemoryComparison"
+    name = "LRComparison"
     
 
     for agent in agents:
-        episode,score,max_q_mean = evaluateAgent(discount_factor=agent["discount_factor"], learning_rate=agent["learning_rate"],\
+        episode,score,max_q_mean, meanScores= evaluateAgent(discount_factor=agent["discount_factor"], learning_rate=agent["learning_rate"],\
                   target_update_frequency=agent["target_update_frequency"], memory_size=agent["memory_size"],\
                   regularization = agent["regularization"], epsilonDecay=agent["epsilonDecay"], \
                   model=agent["model"])
 
         agentEpisodes.append(episode)
         agentScores.append(score)
+        agentMeanScores.append(meanScores)
         agentMax_q_means.append(max_q_mean)
         legends.append(agent["name"])
 
 
-    plot_data(agentEpisodes,agentScores,agentMax_q_means, legends, name)
+    plot_data(agentEpisodes,agentScores,agentMax_q_means, agentMeanScores, legends, name)
 
 
 

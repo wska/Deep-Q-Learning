@@ -145,8 +145,8 @@ Agent13 = {"name": "32-32-2 (ADAM), LR=0.0001, MZ=5000", \
 
 ################################################
 
-#Simple models
-Agent14 = {"name": "16-16-16-2 (ADAM), lr=0.001, MZ=1000", \
+#DF Comparison
+Agent14 = {"name": "16-16-16-2 (ADAM), lr=0.001, DF=0.95", \
           "discount_factor": 0.95,    \
           "learning_rate": 0.001,  \
           "target_update_frequency": 1,    \
@@ -156,22 +156,98 @@ Agent14 = {"name": "16-16-16-2 (ADAM), lr=0.001, MZ=1000", \
           "model": simple_model   \
 }
 
-Agent15 = {"name": "16-16-16-2 (ADAM), lr=0.001, MZ=2500", \
-          "discount_factor": 0.95,    \
+
+Agent15 = {"name": "16-16-16-2 (ADAM), lr=0.001, DF=0.99", \
+          "discount_factor": 0.99,    \
           "learning_rate": 0.001,  \
           "target_update_frequency": 1,    \
-          "memory_size": 2500,    \
+          "memory_size": 1000,    \
           "regularization": 0.000,     \
           "epsilonDecay": 1.00,   \
           "model": simple_model   \
 }
 
-Agent16 = {"name": "16-16-16-2 (ADAM), lr=0.001, MZ=5000", \
-          "discount_factor": 0.95,    \
+
+Agent16 = {"name": "16-16-16-2 (ADAM), lr=0.001, DF=0.90", \
+          "discount_factor": 0.90,    \
           "learning_rate": 0.001,  \
           "target_update_frequency": 1,    \
-          "memory_size": 5000,    \
+          "memory_size": 1000,    \
           "regularization": 0.000,     \
           "epsilonDecay": 1.00,   \
           "model": simple_model   \
 }
+
+################################################
+
+################################################
+
+#LR Comparison
+Agent14 = {"name": "16-16-16-2 (ADAM), lr=0.001, DF=0.99", \
+          "discount_factor": 0.99,    \
+          "learning_rate": 0.001,  \
+          "target_update_frequency": 1,    \
+          "memory_size": 1000,    \
+          "regularization": 0.000,     \
+          "epsilonDecay": 1.00,   \
+          "model": simple_model   \
+}
+
+
+Agent15 = {"name": "16-16-16-2 (ADAM), lr=0.005, DF=0.99", \
+          "discount_factor": 0.99,    \
+          "learning_rate": 0.005,  \
+          "target_update_frequency": 1,    \
+          "memory_size": 1000,    \
+          "regularization": 0.000,     \
+          "epsilonDecay": 1.00,   \
+          "model": simple_model   \
+}
+
+
+Agent16 = {"name": "16-16-16-2 (ADAM), lr=0.0001, DF=0.99", \
+          "discount_factor": 0.99,    \
+          "learning_rate": 0.0001,  \
+          "target_update_frequency": 1,    \
+          "memory_size": 1000,    \
+          "regularization": 0.000,     \
+          "epsilonDecay": 1.00,   \
+          "model": simple_model   \
+}
+
+################################################
+
+#LR Comparison
+Agent14 = {"name": "16-16-16-2 (ADAM), lr=0.001, DF=0.99, EPSD=1.00", \
+          "discount_factor": 0.99,    \
+          "learning_rate": 0.001,  \
+          "target_update_frequency": 1,    \
+          "memory_size": 1000,    \
+          "regularization": 0.000,     \
+          "epsilonDecay": 1.00,   \
+          "model": simple_model   \
+}
+
+
+Agent15 = {"name": "16-16-16-2 (ADAM), lr=0.001, DF=0.99, EPSD=0.990", \
+          "discount_factor": 0.99,    \
+          "learning_rate": 0.001,  \
+          "target_update_frequency": 1,    \
+          "memory_size": 1000,    \
+          "regularization": 0.000,     \
+          "epsilonDecay": 0.990,   \
+          "model": simple_model   \
+}
+
+
+Agent16 = {"name": "16-16-16-2 (ADAM), lr=0.001, DF=0.99, EPSD=0.999", \
+          "discount_factor": 0.99,    \
+          "learning_rate": 0.001,  \
+          "target_update_frequency": 1,    \
+          "memory_size": 1000,    \
+          "regularization": 0.000,     \
+          "epsilonDecay": 0.999,   \
+          "model": simple_model   \
+}
+
+################################################

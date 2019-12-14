@@ -36,13 +36,10 @@ def updated_default(self):
 
 def simple_model(self):
         model = Sequential()
-        model.add(Dense(16, input_dim=self.state_size, activation='relu',
+        model.add(Dense(40, input_dim=self.state_size, activation='relu',
                         kernel_initializer='he_uniform'))
 
-        model.add(Dense(16, activation='relu',
-                        kernel_initializer='he_uniform'))
-
-        model.add(Dense(16, activation='relu',
+        model.add(Dense(40, activation='relu',
                         kernel_initializer='he_uniform'))
 
         model.add(Dense(self.action_size, activation='linear',
